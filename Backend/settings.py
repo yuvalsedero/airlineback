@@ -25,8 +25,17 @@ SECRET_KEY = 'django-insecure-=$z11f1gs^^s_fxyg4+&#hrw+&aa8zs*te^e+^c3ll44b(+h!^
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+IS_HEROKU = "DYNO" in os.environ
 
-ALLOWED_HOSTS = ['*']
+# Generally avoid wildcards(*). However since Heroku router provides hostname validation it is ok
+if IS_HEROKU:
+    ALLOWED_HOSTS = ["*"]
+else:
+    ALLOWED_HOSTS = []
+
+# SECURITY WARNING: don't run with debug turned on in production!
+if not IS_HEROKU:
+    DEBUG = True
 
 
 # Application definition
@@ -43,6 +52,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
     'rest_framework.authtoken',
+    'gunicorn',
     ]
 
 MIDDLEWARE = [
